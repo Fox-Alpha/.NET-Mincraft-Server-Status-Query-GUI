@@ -21,24 +21,23 @@ namespace Mincraft_Server_Status_Query_GUI.Klassen
 	public class ClassServerStatus
 	{
 		Dictionary<string, string> serverdata;
-		bool isIPAdress = false;
+		static bool isIPAdress = false;
 		
-		string _hostname;
+		static string _hostname;
 		static string pwd = "BvLzB2jAeflOO3n8hvr66dUW&1";
+		static string handshake = "";
 		static private byte[] m_buffer;
 		
 		public string hostname {
 			get { return _hostname; }
 			set {
-				if (Regex.IsMatch(value, @"\b(?:\d{1,3}\.){3}\d{1,3}\b")) {
-					Debug.WriteLine("Hostname entspricht einer IP Adresse");
-					isIPAdress = true;
-				}				
+				isIPAdress = Regex.IsMatch(value, @"\b(?:\d{1,3}\.){3}\d{1,3}\b");
+				Debug.WriteLine("Hostname entspricht einer IP Adresse");
 				_hostname = value; 
 			}
 		}
 		
-		int _port;
+		static int _port;
 		
 		public int port {
 			get { return _port; }
@@ -49,11 +48,16 @@ namespace Mincraft_Server_Status_Query_GUI.Klassen
 			}
 		}
 		
-		Socket serversocket;
+//		signed char[] handshake;
+		
+//		Socket serversocket;
 		
 		public ClassServerStatus()
 		{
-			hostname = "192.168.21.4";
+//			hostname = "192.168.21.4";
+			hostname = "88.198.31.34";
+			port = 25565;
+			
 			serverdata = new Dictionary<string, string>();
 			
 			serverdata.Add("hostname", "");
@@ -67,13 +71,14 @@ namespace Mincraft_Server_Status_Query_GUI.Klassen
 			serverdata.Add("ping", "");
 			
 			m_buffer = new byte[1024];
+//			handshake = new char[]();
 		}
 		
 		public void getStatus()
 		{
 //			serversocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 //			Socket.ConnectAsync(SocketType.Stream, ProtocolType.Tcp, null);
-			Connect();
+			Connect(hostname);
 		}
 		
 		public void getStatus(string host, int port)
@@ -83,9 +88,23 @@ namespace Mincraft_Server_Status_Query_GUI.Klassen
 		
 	   	private static void Connect(string ipAdd="127.0.0.1")
 	    {
+	   		handshake = string.Format("{0:X}0{1:x}{2}{3}{4}{5}{6}{7}",
+	   		                          ipAdd.Length, 
+	   		                          0x04, 
+	   		                          _hostname.Length, 
+	   		                          _hostname, 
+	   		                          _port,
+	   		                          0x01, 0x01, 0x00);
+	   		
+	   		if (isIPAdress) {
+	   			Debug.WriteLine("TODO: Hostname entspricht einer IP Adresse");
+	   		}
+	   		else
+	   			Debug.WriteLine("TODO: Hostname entspricht keiner IP Adresse");
+	   		
 			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			SocketAsyncEventArgs e = new SocketAsyncEventArgs();
-			IPEndPoint ipEnd = new IPEndPoint(IPAddress.Parse(ipAdd), 12489);
+			IPEndPoint ipEnd = new IPEndPoint(IPAddress.Parse(ipAdd), 25565);
 			e.RemoteEndPoint = ipEnd;
 			e.UserToken = s;
 			e.Completed += new EventHandler<SocketAsyncEventArgs>(e_Completed);
@@ -146,14 +165,14 @@ namespace Mincraft_Server_Status_Query_GUI.Klassen
 //	                ProcessSend(e);
 	                Debug.WriteLine("Datensenden ...", "e_Completed()");
 		            StreamReader sr = new StreamReader(new NetworkStream(e.ConnectSocket));
-		            Debug.WriteLine("Connection Established : " + e.RemoteEndPoint + " PC NAME : " + sr.ReadLine());
+		            Debug.WriteLine("Connection Established : " + e.RemoteEndPoint + " \r\nEmpfangen : " + sr.ReadLine());
 	                break;
 	            case SocketAsyncOperation.Connect:
 	                Debug.WriteLine("Verbindung hergestellt", "e_Completed()");
-		    		StringToByteArray(pwd).CopyTo(m_buffer, 0);
+		    		StringToByteArray(handshake).CopyTo(m_buffer, 0);
 //		    		StreamWriter sw = new StreamWriter(new NetworkStream(e.ConnectSocket));
 //					sw.Write("{0}&1\n", pwd);
-		    		e.SetBuffer(m_buffer, e.Offset, StringToByteArray(pwd).Length);
+		    		e.SetBuffer(m_buffer, e.Offset, StringToByteArray(handshake).Length);
 		    		e.ConnectSocket.SendAsync(e);
 	                break;
 //	            default:
@@ -195,6 +214,13 @@ namespace Mincraft_Server_Status_Query_GUI.Klassen
 			System.Text.UTF8Encoding enc = new System.Text.UTF8Encoding();
 			//ASCIIEncoding
 			return enc.GetString(arr);
+		}
+		
+		void write2Log(string strText)
+		{
+			string strDateTime = DateTime.Now.ToString();
+			
+			
 		}
 	}
 }
