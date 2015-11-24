@@ -1,6 +1,7 @@
 ﻿Server 1: 88.198.31.34	25565
 Server 2: 88.198.31.34	25569
-
+https://github.com/alca259/Minecraft-Server-Status-CSharp.git
+dw.feedupyourbeast.de:25569
 
 
 <?php
