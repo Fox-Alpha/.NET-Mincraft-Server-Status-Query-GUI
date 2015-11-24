@@ -83,7 +83,7 @@ namespace Mincraft_Server_Status_Query_GUI
 			// beendenToolStripMenuItem
 			// 
 			this.beendenToolStripMenuItem.Name = "beendenToolStripMenuItem";
-			this.beendenToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.beendenToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
 			this.beendenToolStripMenuItem.Text = "Beenden";
 			// 
 			// statusStrip1
@@ -102,6 +102,7 @@ namespace Mincraft_Server_Status_Query_GUI
 			this.button1.TabIndex = 2;
 			this.button1.Text = "Status !";
 			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// textBox1
 			// 
@@ -109,6 +110,7 @@ namespace Mincraft_Server_Status_Query_GUI
 			this.textBox1.Name = "textBox1";
 			this.textBox1.Size = new System.Drawing.Size(153, 20);
 			this.textBox1.TabIndex = 3;
+			this.textBox1.Text = "192.168.21.4";
 			// 
 			// label1
 			// 
@@ -135,6 +137,7 @@ namespace Mincraft_Server_Status_Query_GUI
 			this.textBox2.Name = "textBox2";
 			this.textBox2.Size = new System.Drawing.Size(100, 20);
 			this.textBox2.TabIndex = 6;
+			this.textBox2.Text = "12489";
 			// 
 			// richTextBox1
 			// 
